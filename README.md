@@ -103,6 +103,8 @@
 <label for="vitoria-item">Ao final, vence quem acumulou mais pontos</label>
 
 <br>
+<hr></hr>
+
 <b>Bônus:</b>
 
 <ul>
