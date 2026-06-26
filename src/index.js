@@ -22,6 +22,10 @@ async function rollDice(){
     return Math.floor(Math.random() * 6) + 1;
 }
 
+async function rollWeapon(){
+    return Math.floor(Math.random() * 2) + 1;
+}
+
 async function getRandomBlock() {
     let random = Math.random();
     let result;
@@ -45,36 +49,54 @@ async function logRollResult(characterName, block, diceResult, attribute) {
     console.log(`${characterName} 🎲 rolou um dado de ${block} ${diceResult} + ${attribute} = ${diceResult + attribute}`);
 }
 
+async function showResults(character1, character2) {
+    console.log(`${character1.NAME} possui: ${character1.POINTS}`);
+    console.log(`${character2.NAME} possui: ${character2.POINTS}`);
+}
+
 async function scorePoint(character1, character2) {
     if (character1.ROUND_POINTS > character2.ROUND_POINTS){
-        console.log(`${character1.NAME} marcou um ponto!`);
+        console.log(`${character1.NAME} marcou um ponto!\n`);
         character1.POINTS++;
-        console.log(`${character1.NAME} possui: ${character1.POINTS}`);
     } else if (character2.ROUND_POINTS > character1.ROUND_POINTS){
-        console.log(`${character2.NAME} marcou um ponto!`);
+        console.log(`${character2.NAME} marcou um ponto!\n`);
         character2.POINTS++;
-        console.log(`${character2.NAME} possui: ${character2.POINTS}`);
+    } else {
+         console.log("Empate!\n");
     }
 }
 
-async function clashMacth(character1, character2) {
+async function clashMatch(character1, character2) {
+    let numWeapon = await rollWeapon();
+
     if(character1.POWER_MATCH > character2.POWER_MATCH && character2.POINTS > 0){
-        console.log(
-            `${character1.NAME} venceu o confronto! ${character2.NAME} perdeu 1 ponto 🐢`
+        console.log(numWeapon == 1 
+            ? `${character1.NAME} lançou um casco... \n${character1.NAME} venceu o confronto! \n${character2.NAME} perdeu ${numWeapon} ponto 🐢 \n${character1.NAME} ganhou um turbo(+1 ponto)!`
+            : `${character1.NAME} lançou uma bomba... \n${character1.NAME} venceu o confronto! \n${character2.NAME} perdeu ${numWeapon} ponto 💣 \n${character1.NAME} ganhou um turbo(+1 ponto)!`
         );
-        character2.POINTS--;
+
+        character2.POINTS - numWeapon > 0 ? character2.POINTS -= numWeapon : character2.POINTS = 0;
+        character1.POINTS++;
+
+    }else if(character1.POWER_MATCH > character2.POWER_MATCH && character2.POINTS <= 0){
+        console.log(`${character1.NAME} venceu o confronto! ${character2.NAME} não perdeu ponto`)
     }
 
     if(character2.POWER_MATCH > character1.POWER_MATCH && character1.POINTS > 0){
-        console.log(
-            `${character2.NAME} venceu o confronto! ${character1.NAME} perdeu 1 ponto 🐢`
+        console.log(numWeapon == 1 
+            ? `${character2.NAME} lançou um casco... \n${character2.NAME} venceu o confronto! \n${character1.NAME} perdeu ${numWeapon} ponto 🐢 \n${character2.NAME} ganhou um turbo(+1 ponto)!`
+            : `${character2.NAME} lançou um bomba... \n${character2.NAME} venceu o confronto! \n${character1.NAME} perdeu ${numWeapon} ponto 💣 \n${character2.NAME} ganhou um turbo(+1 ponto)!`
         );
-        character1.POINTS--;
+
+        character1.POINTS - numWeapon > 0 ? character1.POINTS -= numWeapon : character1.POINTS = 0;
+        character2.POINTS++;
+
+    }else if(character2.POWER_MATCH > character1.POWER_MATCH && character1.POINTS <= 0){
+        console.log(`${character2.NAME} venceu o confronto! ${character1.NAME} não perdeu ponto`)
     }
 
-    console.log(character2.POWER_MATCH === character1.POWER_MATCH ? "Confronto empatado! Nenhum ponto foi perdido" : "");
+    console.log(character2.POWER_MATCH === character1.POWER_MATCH ? "Confronto empatado! Nenhum ponto foi perdido e nenhum ponto foi ganho" : "");
 }
-
 
 async function playerRaceEngine(character1, character2) {
     for(let round = 1; round <= 5; round++){
@@ -107,6 +129,8 @@ async function playerRaceEngine(character1, character2) {
                 diceResult2, 
                 character2.VELOCIDADE
             );
+
+            await scorePoint(character1, character2);
         }
 
         if(block == "CURVA"){
@@ -126,6 +150,8 @@ async function playerRaceEngine(character1, character2) {
                 diceResult2, 
                 character2.MANOBRABILIDADE
             );
+
+            await scorePoint(character1, character2);
         }
 
         if(block == "CONFRONTO"){
@@ -148,10 +174,10 @@ async function playerRaceEngine(character1, character2) {
                 character2.POWER
             );
 
-            await clashMacth(character1, character2)
+            await clashMatch(character1, character2);
         }
+        await showResults(character1, character2);
 
-        await scorePoint(character1, character2)
         console.log("\n-------------------------\n");
     }
 }
@@ -166,7 +192,7 @@ async function declareWinner(character1, character2) {
     }else if(character2.POINTS > character1.POINTS){
         console.log(`\n${character2.NAME} venceu a corrida! Parabéns! 🏆`);
     }else{
-        console.log("A corrida terminou em empate");
+        console.log("\nA corrida terminou em empate!");
     }
 }
 
