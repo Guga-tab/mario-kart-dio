@@ -1,7 +1,7 @@
 {
   "name": "mario-kart",
   "version": "1.0.0",
-  "description": "",
+  "description": "<h1>Desafio de projeto do Felipão: Mario Kart.JS</h1>",
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,5 +9,16 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "directories": {
+    "doc": "docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Guga-tab/mario-kart-dio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Guga-tab/mario-kart-dio/issues"
+  },
+  "homepage": "https://github.com/Guga-tab/mario-kart-dio#readme"
 }
